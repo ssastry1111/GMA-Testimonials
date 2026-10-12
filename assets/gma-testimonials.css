@@ -1,0 +1,377 @@
+/* GMA Testimonials - front-end grid */
+
+.gma-t-wrap {
+    --gma-t-accent: #5f7f2f;
+    --gma-t-dark:   #2f3e1f;
+    --gma-t-border: #e2e2d8;
+    --gma-t-bg:     #ffffff;
+    --gma-t-muted:  #6b6b60;
+}
+
+/* ── Filter bar ─────────────────────────────────────────────────────────── */
+
+.gma-t-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 16px;
+    margin: 0 0 28px;
+    padding: 16px 18px;
+    background: rgba(95, 127, 47, 0.06);
+    border: 1px solid var(--gma-t-border);
+    border-radius: 8px;
+}
+
+.gma-t-filter {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--gma-t-dark);
+}
+
+.gma-t-filter select {
+    min-width: 190px;
+    padding: 8px 10px;
+    font-size: 0.95rem;
+    font-weight: 400;
+    border: 1px solid var(--gma-t-border);
+    border-radius: 6px;
+    background: var(--gma-t-bg);
+    color: inherit;
+}
+
+.gma-t-reset {
+    padding: 9px 16px;
+    font-size: 0.9rem;
+    border: 1px solid var(--gma-t-border);
+    border-radius: 6px;
+    background: var(--gma-t-bg);
+    color: var(--gma-t-muted);
+    cursor: pointer;
+}
+
+.gma-t-reset:hover { color: var(--gma-t-dark); border-color: var(--gma-t-accent); }
+
+/* ── Grid ───────────────────────────────────────────────────────────────── */
+
+.gma-t-grid {
+    display: grid;
+    gap: 22px;
+}
+
+.gma-t-cols-1 { grid-template-columns: 1fr; }
+.gma-t-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.gma-t-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.gma-t-cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+/* Equal heights: cards stretch to the tallest in the row, footer pinned down */
+.gma-t-equal .gma-t-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.gma-t-equal .gma-t-body { flex: 1 1 auto; }
+
+.gma-t-card {
+    background: var(--gma-t-bg);
+    border: 1px solid var(--gma-t-border);
+    border-radius: 10px;
+    padding: 20px;
+    transition: box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.gma-t-card:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+    transform: translateY(-2px);
+}
+
+.gma-t-name {
+    margin: 0 0 14px;
+    font-size: 1.15rem;
+    line-height: 1.3;
+    color: var(--gma-t-dark);
+}
+
+.gma-t-body {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+}
+
+.gma-t-photo-wrap { flex: 0 0 auto; }
+
+.gma-t-photo {
+    width: 74px;
+    height: 74px;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
+}
+
+.gma-t-photo-default { opacity: 0.55; }
+
+.gma-t-text { flex: 1 1 auto; min-width: 0; }
+
+.gma-t-excerpt {
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: #3a3a32;
+    overflow-wrap: break-word;
+}
+
+.gma-t-toggle {
+    margin-top: 8px;
+    padding: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--gma-t-accent);
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.gma-t-toggle:hover { text-decoration: underline; }
+
+/* ── Rating ─────────────────────────────────────────────────────────────── */
+
+.gma-t-rating { margin-bottom: 6px; line-height: 1; }
+.gma-t-star { color: #d8d8cc; font-size: 1rem; }
+.gma-t-star.is-on { color: #e8a83c; }
+
+/* ── Footer, badges, date ───────────────────────────────────────────────── */
+
+.gma-t-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--gma-t-border);
+}
+
+.gma-t-badges { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.gma-t-badge {
+    padding: 3px 10px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.gma-t-badge-mentor  { background: rgba(95, 127, 47, 0.12);  color: var(--gma-t-accent); }
+.gma-t-badge-service { background: rgba(232, 168, 60, 0.16); color: #96661a; }
+
+.gma-t-date {
+    margin-left: auto;
+    font-size: 0.8rem;
+    color: var(--gma-t-muted);
+}
+
+/* ── Pagination ─────────────────────────────────────────────────────────── */
+
+.gma-t-pagination {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 30px;
+}
+
+.gma-t-pagination button {
+    min-width: 34px;
+    padding: 6px 10px;
+    font-size: 0.9rem;
+    border: 1px solid var(--gma-t-border);
+    border-radius: 6px;
+    background: var(--gma-t-bg);
+    color: var(--gma-t-accent);
+    cursor: pointer;
+}
+
+.gma-t-pagination button:hover:not(:disabled):not(.is-current) {
+    border-color: var(--gma-t-accent);
+}
+
+.gma-t-pagination button.is-current {
+    background: var(--gma-t-accent);
+    border-color: var(--gma-t-accent);
+    color: #fff;
+    font-weight: 600;
+    cursor: default;
+}
+
+.gma-t-pagination button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── States ─────────────────────────────────────────────────────────────── */
+
+.gma-t-empty {
+    padding: 34px 20px;
+    text-align: center;
+    color: var(--gma-t-muted);
+    border: 1px dashed var(--gma-t-border);
+    border-radius: 10px;
+}
+
+.gma-t-results.is-loading { opacity: 0.45; transition: opacity 0.15s ease; }
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+
+@media (max-width: 1024px) {
+    .gma-t-cols-3, .gma-t-cols-4 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 680px) {
+    .gma-t-cols-2, .gma-t-cols-3, .gma-t-cols-4 { grid-template-columns: 1fr; }
+    .gma-t-filters { flex-direction: column; align-items: stretch; }
+    .gma-t-filter select { min-width: 0; width: 100%; }
+    .gma-t-photo { width: 60px; height: 60px; }
+}
+
+/* ── Result count and Load more (v1.1) ──────────────────────────────────── */
+
+.gma-t-count {
+    margin: 0 0 14px;
+    font-size: 0.85rem;
+    color: var(--gma-t-muted);
+}
+
+.gma-t-pagination + .gma-t-grid { margin-top: 18px; }
+.gma-t-grid + .gma-t-pagination { margin-top: 30px; }
+
+.gma-t-page-of {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    color: var(--gma-t-muted);
+}
+
+.gma-t-loadmore-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 28px;
+}
+
+.gma-t-loadmore {
+    padding: 11px 30px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #fff;
+    background: var(--gma-t-accent);
+    border: 1px solid var(--gma-t-accent);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.gma-t-loadmore:hover:not(:disabled) { background: var(--gma-t-dark); border-color: var(--gma-t-dark); }
+.gma-t-loadmore:disabled { opacity: 0.6; cursor: wait; }
+
+/* ── Square fallback photo (v1.2) ───────────────────────────────────────── */
+
+.gma-t-photo-square {
+    border-radius: 6px;
+    object-fit: contain;
+    background: rgba(0, 0, 0, 0.03);
+}
+
+/* ── Pre-filtered link (v1.3.2) ─────────────────────────────────────────── */
+
+/* Tokens repeated here because the link usually sits outside .gma-t-wrap. */
+.gma-t-link {
+    --gma-t-accent: #5f7f2f;
+    --gma-t-dark:   #2f3e1f;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    transition: background 0.16s ease, color 0.16s ease, border-color 0.16s ease, gap 0.16s ease;
+
+    /* Page builders (Spectra, and most block themes) make their containers
+       flex, which stretches children to the full height and width of the
+       column. A pill-shaped link stretched that way becomes a giant oval, so
+       opt out of both axes and size to the text instead. */
+    align-self: center;
+    flex: 0 0 auto;
+    /* fit-content rather than auto: themes and page builders often force
+       width:100% on links inside their containers, which auto does not beat. */
+    width: fit-content;
+    max-width: 100%;
+    height: auto;
+    box-sizing: border-box;
+}
+
+/* Escape hatch: add class="gma-t-link-full" to stretch it to the container. */
+.gma-t-link.gma-t-link-full {
+    width: 100%;
+    align-self: stretch;
+}
+
+.gma-t-link:hover { gap: 12px; }
+
+.gma-t-link-arrow {
+    font-size: 1.05em;
+    line-height: 1;
+}
+
+/* Outline: reads as a button without competing with a solid primary CTA */
+.gma-t-link-outline {
+    padding: 10px 22px;
+    color: var(--gma-t-accent);
+    background: transparent;
+    border: 2px solid var(--gma-t-accent);
+    border-radius: 999px;
+}
+
+.gma-t-link-outline:hover,
+.gma-t-link-outline:focus {
+    color: #fff;
+    background: var(--gma-t-accent);
+    border-color: var(--gma-t-accent);
+}
+
+/* Solid: same weight as a primary button, when it should lead */
+.gma-t-link-solid {
+    padding: 11px 24px;
+    color: #fff;
+    background: var(--gma-t-accent);
+    border: 2px solid var(--gma-t-accent);
+    border-radius: 999px;
+}
+
+.gma-t-link-solid:hover,
+.gma-t-link-solid:focus {
+    background: var(--gma-t-dark);
+    border-color: var(--gma-t-dark);
+}
+
+/* Text: bolder than body copy, with an underline that grows on hover */
+.gma-t-link-text {
+    padding: 0;
+    color: var(--gma-t-accent);
+    border-bottom: 2px solid rgba(95, 127, 47, 0.35);
+    border-radius: 0;
+}
+
+.gma-t-link-text:hover,
+.gma-t-link-text:focus {
+    color: var(--gma-t-dark);
+    border-bottom-color: var(--gma-t-dark);
+}
+
+.gma-t-link:focus-visible {
+    outline: 2px solid var(--gma-t-dark);
+    outline-offset: 3px;
+}
