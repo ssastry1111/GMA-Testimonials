@@ -2,7 +2,7 @@
 
 A single WordPress plugin that replaces **Strong Testimonials** on [Global Mentoring Academy](https://globalmentoringacademy.com) and absorbs the two standalone testimonial photo plugins.
 
-**Current version:** 1.6
+**Current version:** 1.7
 
 ---
 
@@ -178,6 +178,13 @@ Deactivate this plugin, reactivate Strong Testimonials, restore the original sho
 ---
 
 ## Changelog
+
+### v1.7
+- **Compact, collapsible filter bar on phones.** The bar was taking roughly 700px of a phone screen — three stacked full-width controls, each with its own label row, plus a full-width Reset — which pushed every testimonial below the fold. On screens up to 680px it now collapses behind a "Filter & search" button showing a count of active filters; the panel is unchanged on wider screens.
+- The expanded mobile panel is also compacted: the two dropdowns share a row, search spans the full width, labels are smaller and Reset reads as a link rather than a third full-width button.
+- The panel opens automatically when a filter or search is already active on load (from a `?mentor=` or `?q=` link), so a narrowed grid is never unexplained.
+- The pagination above the grid is hidden on phones, where it only duplicates the one below.
+- New setting for the toggle button's label.
 
 ### v1.6
 - **Name search box** in the filter bar, for finding the person who left a testimonial. Matches the post title and the name meta field only, not the testimonial body, so a search returns testimonials written *by* that person rather than ones mentioning them.

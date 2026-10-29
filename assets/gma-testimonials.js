@@ -190,6 +190,35 @@
         }
     }
 
+    /* Collapsed filter panel (phones only; CSS keeps it open on desktop). */
+    function bindFiltersToggle(wrap) {
+        var toggle = wrap.querySelector('.gma-t-filters-toggle');
+        if (!toggle || toggle.dataset.bound === '1') return;
+        toggle.dataset.bound = '1';
+
+        toggle.addEventListener('click', function () {
+            var open = wrap.classList.toggle('gma-t-filters-open');
+            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+    }
+
+    /* Keep the collapsed button honest about how many filters are applied. */
+    function updateActiveCount(wrap) {
+        var badge = wrap.querySelector('.gma-t-filters-count');
+        if (!badge) return;
+
+        var n = 0;
+        var selects = wrap.querySelectorAll('.gma-t-select');
+        for (var i = 0; i < selects.length; i++) {
+            if (selects[i].value) n++;
+        }
+        var searchBox = wrap.querySelector('.gma-t-search');
+        if (searchBox && searchBox.value.trim()) n++;
+
+        badge.textContent = n;
+        badge.hidden = (n === 0);
+    }
+
     function bindFilters(wrap) {
         var selects   = wrap.querySelectorAll('.gma-t-select');
         var searchBox = wrap.querySelector('.gma-t-search');
@@ -197,6 +226,7 @@
 
         for (var i = 0; i < selects.length; i++) {
             selects[i].addEventListener('change', function () {
+                updateActiveCount(wrap);
                 syncUrl(wrap);
                 fetchResults(wrap, 1);
             });
@@ -210,6 +240,7 @@
 
         function runSearch() {
             updateClear();
+            updateActiveCount(wrap);
             syncUrl(wrap);
             fetchResults(wrap, 1);
         }
@@ -263,6 +294,7 @@
                 for (var j = 0; j < selects.length; j++) selects[j].value = '';
                 if (searchBox) { searchBox.value = ''; }
                 updateClear();
+                updateActiveCount(wrap);
                 syncUrl(wrap);
                 fetchResults(wrap, 1);
             });
@@ -277,6 +309,8 @@
             bindPagination(wrap);
             bindLoadMore(wrap);
             bindFilters(wrap);
+            bindFiltersToggle(wrap);
+            updateActiveCount(wrap);
         });
     }
 

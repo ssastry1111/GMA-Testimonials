@@ -229,7 +229,6 @@
 
 @media (max-width: 680px) {
     .gma-t-cols-2, .gma-t-cols-3, .gma-t-cols-4 { grid-template-columns: 1fr; }
-    .gma-t-filters { flex-direction: column; align-items: stretch; }
     .gma-t-filter select { min-width: 0; width: 100%; }
     .gma-t-photo { width: 60px; height: 60px; }
 }
@@ -434,4 +433,93 @@
 
 @media (max-width: 680px) {
     .gma-t-filter-search { flex: 1 1 100%; }
+}
+
+
+/* ── Collapsible, compact filter bar on phones (v1.7) ───────────────────── */
+
+/* Desktop: no toggle, panel always open. */
+.gma-t-filters-toggle { display: none; }
+
+.gma-t-filters-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #fff;
+    background: var(--gma-t-accent);
+    border-radius: 999px;
+}
+
+.gma-t-filters-count[hidden] { display: none; }
+
+@media (max-width: 680px) {
+
+    .gma-t-filters-toggle {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        margin: 0 0 16px;
+        padding: 11px 16px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--gma-t-dark);
+        background: rgba(95, 127, 47, 0.06);
+        border: 1px solid var(--gma-t-border);
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+    .gma-t-filters-toggle-text { flex: 1 1 auto; text-align: left; }
+
+    /* Chevron rotates to point down once the panel is open. */
+    .gma-t-filters-chevron {
+        flex: 0 0 auto;
+        width: 8px;
+        height: 8px;
+        border-right: 2px solid currentColor;
+        border-bottom: 2px solid currentColor;
+        transform: rotate(-45deg);
+        transition: transform 0.18s ease;
+    }
+
+    .gma-t-filters-open .gma-t-filters-chevron { transform: rotate(45deg); }
+
+    /* Collapsed by default; the wrap class opens it. */
+    .gma-t-filters { display: none; }
+
+    .gma-t-filters-open .gma-t-filters {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px 10px;
+        padding: 14px;
+    }
+
+    /* Two dropdowns share a row, search spans the full width. */
+    .gma-t-filters-open .gma-t-filter { gap: 4px; }
+    .gma-t-filters-open .gma-t-filter > span { font-size: 0.75rem; }
+    .gma-t-filters-open .gma-t-filter-search { grid-column: 1 / -1; }
+
+    .gma-t-filters-open .gma-t-filter select,
+    .gma-t-filters-open .gma-t-search { padding-top: 7px; padding-bottom: 7px; }
+
+    /* Reset reads as a link here rather than a third full-width button. */
+    .gma-t-filters-open .gma-t-reset {
+        grid-column: 1 / -1;
+        justify-self: end;
+        padding: 2px 0;
+        font-size: 0.85rem;
+        color: var(--gma-t-accent);
+        background: none;
+        border: none;
+        text-decoration: underline;
+    }
+
+    /* The pager above the grid duplicates the one below. */
+    .gma-t-pagination-top { display: none; }
 }

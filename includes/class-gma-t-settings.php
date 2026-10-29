@@ -71,7 +71,7 @@ class GMA_T_Settings {
 
         $texts = ['read_more_text', 'read_less_text', 'mentor_label', 'service_label', 'all_label',
                   'date_format', 'subject', 'from_name', 'time', 'count_template',
-                  'search_label', 'search_placeholder'];
+                  'search_label', 'search_placeholder', 'filters_toggle_label'];
         foreach ($texts as $key) {
             $out[$key] = isset($in[$key]) ? sanitize_text_field($in[$key]) : $d[$key];
         }
@@ -241,6 +241,10 @@ class GMA_T_Settings {
         echo '</td></tr>';
         $this->text('search_label', 'Search box label', 220);
         $this->text('search_placeholder', 'Search box placeholder', 320);
+        $this->text('filters_toggle_label', 'Mobile toggle label', 220);
+        echo '<tr><td colspan="2"><p class="description">On phones the filter bar collapses behind this button so a testimonial '
+           . 'is visible without scrolling. It stays open on wider screens, and opens automatically when a filter or search '
+           . 'is already active.</p></td></tr>';
         echo '</tbody></table>';
 
         $this->link_builder();

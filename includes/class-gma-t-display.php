@@ -147,7 +147,8 @@ class GMA_T_Display {
         $config['search']  = $locked_search  ? $a['search']  : '';
 
         ob_start();
-        echo '<div class="gma-t-wrap" data-config="' . esc_attr(wp_json_encode($config)) . '">';
+        echo '<div class="' . esc_attr($this->wrap_classes($preselect)) . '"'
+           . ' data-config="' . esc_attr(wp_json_encode($config)) . '">';
 
         if (!empty($a['filters']) && (!$locked_mentor || !$locked_service || !$locked_search)) {
             echo $this->render_filter_bar($preselect, $locked_mentor, $locked_service, $locked_search, $a);
@@ -315,8 +316,29 @@ class GMA_T_Display {
         $sel_service = isset($preselect['service']) ? $preselect['service'] : '';
         $sel_search  = isset($preselect['search'])  ? $preselect['search']  : '';
 
+        // Count what is already narrowing the results, so the collapsed
+        // button can say so rather than looking inert.
+        $active = 0;
+        if ($sel_mentor  !== '') $active++;
+        if ($sel_service !== '') $active++;
+        if ($sel_search  !== '') $active++;
+
+        static $instance = 0;
+        $panel_id = 'gma-t-filters-' . (++$instance);
+
         $all = esc_html(gma_t_opt('all_label'));
-        $out = '<div class="gma-t-filters">';
+
+        // Collapsed on phones only; CSS keeps it open on wider screens, so
+        // the button and this state are invisible there.
+        $out  = '<button type="button" class="gma-t-filters-toggle"'
+              . ' aria-expanded="' . ($active ? 'true' : 'false') . '"'
+              . ' aria-controls="' . esc_attr($panel_id) . '">';
+        $out .= '<span class="gma-t-filters-toggle-text">' . esc_html(gma_t_opt('filters_toggle_label')) . '</span>';
+        $out .= '<span class="gma-t-filters-count"' . ($active ? '' : ' hidden') . '>' . (int) $active . '</span>';
+        $out .= '<span class="gma-t-filters-chevron" aria-hidden="true"></span>';
+        $out .= '</button>';
+
+        $out .= '<div class="gma-t-filters" id="' . esc_attr($panel_id) . '">';
 
         if ($has_mentors) {
             $out .= '<label class="gma-t-filter">';
@@ -358,6 +380,21 @@ class GMA_T_Display {
         $out .= '<button type="button" class="gma-t-reset">Reset</button>';
         $out .= '</div>';
         return $out;
+    }
+
+    /**
+     * Wrap class list for the shortcode container.
+     *
+     * A filter active on first load opens the mobile panel, so the visitor can
+     * see why the grid is narrowed instead of facing an unexplained short list.
+     */
+    private function wrap_classes($preselect) {
+        $classes = ['gma-t-wrap'];
+
+        $active = (!empty($preselect['mentor']) || !empty($preselect['service']) || !empty($preselect['search']));
+        if ($active) $classes[] = 'gma-t-filters-open';
+
+        return implode(' ', $classes);
     }
 
     /**
@@ -486,7 +523,11 @@ class GMA_T_Display {
         $pager   = $enabled ? $this->render_pagination($q->max_num_pages, $paged, $style) : '';
 
         // Load more never renders above the grid - it belongs under it.
-        $before = ($enabled && $a['pagination_pos'] === 'both' && $style !== 'loadmore') ? $pager : '';
+        // The top pager duplicates the one below; it is marked so phones can
+        // drop it and start the grid sooner.
+        $before = ($enabled && $a['pagination_pos'] === 'both' && $style !== 'loadmore')
+            ? str_replace('class="gma-t-pagination"', 'class="gma-t-pagination gma-t-pagination-top"', $pager)
+            : '';
 
         $out  = '';
         if (!empty($a['show_count'])) {
