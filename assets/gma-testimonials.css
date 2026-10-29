@@ -42,17 +42,38 @@
     color: inherit;
 }
 
-.gma-t-reset {
-    padding: 9px 16px;
-    font-size: 0.9rem;
-    border: 1px solid var(--gma-t-border);
-    border-radius: 6px;
-    background: var(--gma-t-bg);
+/* Matches the mobile toggle. The selector is specific and every themed
+   property is restated, because block themes style bare <button> elements
+   and would otherwise render this as a solid uppercase block. */
+.gma-t-wrap button.gma-t-reset {
+    display: inline-flex;
+    align-items: center;
+    width: auto;
+    min-height: 0;
+    padding: 7px 14px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: normal;
+    text-transform: none;
+    text-decoration: none;
     color: var(--gma-t-muted);
+    background: transparent;
+    background-image: none;
+    border: 1px solid var(--gma-t-border);
+    border-radius: 999px;
+    box-shadow: none;
     cursor: pointer;
 }
 
-.gma-t-reset:hover { color: var(--gma-t-dark); border-color: var(--gma-t-accent); }
+.gma-t-wrap button.gma-t-reset:hover,
+.gma-t-wrap button.gma-t-reset:focus {
+    color: var(--gma-t-dark);
+    background: rgba(95, 127, 47, 0.08);
+    border-color: rgba(95, 127, 47, 0.4);
+    box-shadow: none;
+}
 
 /* ── Grid ───────────────────────────────────────────────────────────────── */
 
@@ -411,24 +432,40 @@
    consistent across browsers and positioned with the border radius. */
 .gma-t-search::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
 
-.gma-t-search-clear {
+.gma-t-wrap button.gma-t-search-clear {
     position: absolute;
     top: 50%;
     right: 6px;
     transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 22px;
     height: 22px;
+    min-height: 0;
     padding: 0;
+    font-family: inherit;
     font-size: 1.1rem;
+    font-weight: 400;
     line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
     color: var(--gma-t-muted);
-    background: none;
+    background: transparent;
+    background-image: none;
     border: none;
     border-radius: 50%;
+    box-shadow: none;
     cursor: pointer;
 }
 
-.gma-t-search-clear:hover { color: var(--gma-t-dark); background: rgba(0, 0, 0, 0.05); }
+.gma-t-wrap button.gma-t-search-clear:hover,
+.gma-t-wrap button.gma-t-search-clear:focus {
+    color: var(--gma-t-dark);
+    background: rgba(0, 0, 0, 0.06);
+    box-shadow: none;
+}
+
 .gma-t-search-clear[hidden] { display: none; }
 
 @media (max-width: 680px) {
@@ -530,16 +567,13 @@
     .gma-t-filters-open .gma-t-filter select,
     .gma-t-filters-open .gma-t-search { padding-top: 7px; padding-bottom: 7px; }
 
-    /* Reset reads as a link here rather than a third full-width button. */
-    .gma-t-filters-open .gma-t-reset {
+    /* Reset sits on its own row, right-aligned, as a small pill matching
+       the toggle rather than a third full-width button. */
+    .gma-t-wrap.gma-t-filters-open button.gma-t-reset {
         grid-column: 1 / -1;
         justify-self: end;
-        padding: 2px 0;
-        font-size: 0.85rem;
-        color: var(--gma-t-accent);
-        background: none;
-        border: none;
-        text-decoration: underline;
+        padding: 6px 14px;
+        font-size: 0.8rem;
     }
 
     /* The pager above the grid duplicates the one below. */

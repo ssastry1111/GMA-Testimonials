@@ -2,7 +2,7 @@
 
 A single WordPress plugin that replaces **Strong Testimonials** on [Global Mentoring Academy](https://globalmentoringacademy.com) and absorbs the two standalone testimonial photo plugins.
 
-**Current version:** 1.7.1
+**Current version:** 1.7.2
 
 ---
 
@@ -178,6 +178,9 @@ Deactivate this plugin, reactivate Strong Testimonials, restore the original sho
 ---
 
 ## Changelog
+
+### v1.7.2
+- Reset and the search clear control are now hardened against theme button styling the same way the toggle is, so Reset renders as a small pill matching it instead of an uppercase block.
 
 ### v1.7.1
 - The mobile "Filter & search" control is now a small pill with a light tint rather than a full-width solid green bar. Block themes style bare `<button>` elements — Astra paints them solid, uppercase and full width — which overrode the intended styling, so the selector is more specific and every themed property (background, colour, text-transform, letter-spacing, width, box-shadow) is restated.
