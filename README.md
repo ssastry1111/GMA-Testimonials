@@ -2,7 +2,7 @@
 
 A single WordPress plugin that replaces **Strong Testimonials** on [Global Mentoring Academy](https://globalmentoringacademy.com) and absorbs the two standalone testimonial photo plugins.
 
-**Current version:** 1.7
+**Current version:** 1.7.1
 
 ---
 
@@ -178,6 +178,9 @@ Deactivate this plugin, reactivate Strong Testimonials, restore the original sho
 ---
 
 ## Changelog
+
+### v1.7.1
+- The mobile "Filter & search" control is now a small pill with a light tint rather than a full-width solid green bar. Block themes style bare `<button>` elements — Astra paints them solid, uppercase and full width — which overrode the intended styling, so the selector is more specific and every themed property (background, colour, text-transform, letter-spacing, width, box-shadow) is restated.
 
 ### v1.7
 - **Compact, collapsible filter bar on phones.** The bar was taking roughly 700px of a phone screen — three stacked full-width controls, each with its own label row, plus a full-width Reset — which pushed every testimonial below the fold. On screens up to 680px it now collapses behind a "Filter & search" button showing a count of active filters; the panel is unchanged on wider screens.

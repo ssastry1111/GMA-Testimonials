@@ -445,11 +445,12 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 20px;
-    height: 20px;
-    padding: 0 6px;
-    font-size: 0.75rem;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 5px;
+    font-size: 0.68rem;
     font-weight: 700;
+    line-height: 1;
     color: #fff;
     background: var(--gma-t-accent);
     border-radius: 999px;
@@ -459,36 +460,57 @@
 
 @media (max-width: 680px) {
 
-    .gma-t-filters-toggle {
-        display: flex;
+    /* The selector is deliberately specific, and every themed property is
+       restated: block themes style bare <button> elements (Astra paints them
+       solid, uppercase and full width), which otherwise wins over a single
+       class and turns this into a heavy green bar. */
+    .gma-t-wrap button.gma-t-filters-toggle {
+        display: inline-flex;
         align-items: center;
-        gap: 8px;
-        width: 100%;
-        margin: 0 0 16px;
-        padding: 11px 16px;
-        font-size: 0.95rem;
+        gap: 7px;
+        width: auto;
+        min-height: 0;
+        margin: 0 0 14px;
+        padding: 7px 14px;
+        font-family: inherit;
+        font-size: 0.85rem;
         font-weight: 600;
-        color: var(--gma-t-dark);
-        background: rgba(95, 127, 47, 0.06);
-        border: 1px solid var(--gma-t-border);
-        border-radius: 8px;
+        line-height: 1.2;
+        letter-spacing: normal;
+        text-transform: none;
+        text-decoration: none;
+        color: var(--gma-t-accent);
+        background: rgba(95, 127, 47, 0.08);
+        background-image: none;
+        border: 1px solid rgba(95, 127, 47, 0.25);
+        border-radius: 999px;
+        box-shadow: none;
         cursor: pointer;
     }
 
-    .gma-t-filters-toggle-text { flex: 1 1 auto; text-align: left; }
+    .gma-t-wrap button.gma-t-filters-toggle:hover,
+    .gma-t-wrap button.gma-t-filters-toggle:focus {
+        color: var(--gma-t-dark);
+        background: rgba(95, 127, 47, 0.14);
+        border-color: rgba(95, 127, 47, 0.4);
+        box-shadow: none;
+    }
+
+    .gma-t-filters-toggle-text { flex: 0 1 auto; text-align: left; }
 
     /* Chevron rotates to point down once the panel is open. */
     .gma-t-filters-chevron {
         flex: 0 0 auto;
-        width: 8px;
-        height: 8px;
+        width: 6px;
+        height: 6px;
+        margin-left: 1px;
         border-right: 2px solid currentColor;
         border-bottom: 2px solid currentColor;
-        transform: rotate(-45deg);
+        transform: rotate(45deg) translate(-1px, -1px);
         transition: transform 0.18s ease;
     }
 
-    .gma-t-filters-open .gma-t-filters-chevron { transform: rotate(45deg); }
+    .gma-t-filters-open .gma-t-filters-chevron { transform: rotate(-135deg) translate(-1px, -1px); }
 
     /* Collapsed by default; the wrap class opens it. */
     .gma-t-filters { display: none; }
