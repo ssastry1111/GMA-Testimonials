@@ -375,3 +375,63 @@
     outline: 2px solid var(--gma-t-dark);
     outline-offset: 3px;
 }
+
+/* ── Name search (v1.6) ─────────────────────────────────────────────────── */
+
+.gma-t-filter-search { flex: 1 1 240px; min-width: 0; }
+
+.gma-t-search-wrap {
+    position: relative;
+    display: block;
+}
+
+.gma-t-search {
+    width: 100%;
+    padding: 8px 32px 8px 10px;
+    font-size: 0.95rem;
+    font-weight: 400;
+    border: 1px solid var(--gma-t-border);
+    border-radius: 6px;
+    background: var(--gma-t-bg);
+    color: inherit;
+    box-sizing: border-box;
+    /* Safari styles search inputs as rounded capsules by default. */
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.gma-t-search::placeholder { color: #9b9b90; }
+
+.gma-t-search:focus {
+    outline: none;
+    border-color: var(--gma-t-accent);
+    box-shadow: 0 0 0 2px rgba(95, 127, 47, 0.15);
+}
+
+/* Hide the browser's own clear control; we render our own so it is
+   consistent across browsers and positioned with the border radius. */
+.gma-t-search::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+
+.gma-t-search-clear {
+    position: absolute;
+    top: 50%;
+    right: 6px;
+    transform: translateY(-50%);
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    font-size: 1.1rem;
+    line-height: 1;
+    color: var(--gma-t-muted);
+    background: none;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.gma-t-search-clear:hover { color: var(--gma-t-dark); background: rgba(0, 0, 0, 0.05); }
+.gma-t-search-clear[hidden] { display: none; }
+
+@media (max-width: 680px) {
+    .gma-t-filter-search { flex: 1 1 100%; }
+}

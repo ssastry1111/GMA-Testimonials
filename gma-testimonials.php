@@ -3,14 +3,14 @@
 Plugin Name: GMA Testimonials
 Plugin URI: https://globalmentoringacademy.com
 Description: v1.4 - Complete testimonials system for GMA. Adds a link builder on the settings page that writes the shortcode and URL for any mentor or service. Registers the testimonial post type, adds Mentor and Service taxonomies with front-end filtering, renders a configurable responsive grid via shortcode, and bundles the Photo Reminder and Photo Uploader modules. Replaces Strong Testimonials.
-Version: 1.5.1
+Version: 1.6
 Author: GMA
 Text Domain: gma-testimonials
 */
 
 if (!defined('ABSPATH')) exit;
 
-define('GMA_T_VERSION',      '1.5.1');
+define('GMA_T_VERSION',      '1.6');
 define('GMA_T_FILE',         __FILE__);
 define('GMA_T_DIR',          plugin_dir_path(__FILE__));
 define('GMA_T_URL',          plugin_dir_url(__FILE__));
@@ -80,6 +80,9 @@ function gma_t_defaults() {
         'date_format'     => 'F j, Y',
         // Filters
         'enable_filters'  => 1,
+        'enable_search'   => 1,
+        'search_label'    => 'Search by name',
+        'search_placeholder' => 'First, last or part of a name',
         'mentor_label'    => 'Mentor',
         'service_label'   => 'Service',
         'all_label'       => 'All',

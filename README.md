@@ -2,7 +2,7 @@
 
 A single WordPress plugin that replaces **Strong Testimonials** on [Global Mentoring Academy](https://globalmentoringacademy.com) and absorbs the two standalone testimonial photo plugins.
 
-**Current version:** 1.5.1
+**Current version:** 1.6
 
 ---
 
@@ -80,7 +80,27 @@ Improvements on top: equal-height cards, circular photos, mentor/service badges,
 [gma_testimonial_photo_upload]
 ```
 
-Attributes: `columns`, `per_page`, `order`, `excerpt_words`, `mentor`, `service`, `category`, `filters`, `show_photo`, `show_date`, `show_rating`, `show_badges`, `pagination`, `pagination_pos`, `pagination_style`, `show_count`.
+Attributes: `columns`, `per_page`, `order`, `excerpt_words`, `mentor`, `service`, `category`, `search`, `filters`, `show_search`, `show_photo`, `show_date`, `show_rating`, `show_badges`, `pagination`, `pagination_pos`, `pagination_style`, `show_count`.
+
+### Name search
+
+The filter bar carries a search box for finding the person who left a testimonial.
+
+It matches the **post title** and the configured **name meta field** only — never the testimonial body — so searching "Nitin" finds testimonials written *by* Nitin rather than every testimonial that mentions him.
+
+- Partial words match: `narin` finds Narinder.
+- Several words must all match, in any order: both `narinder kaur` and `kaur narinder` find the same person.
+- Case-insensitive, and `%` or `_` typed in the box are treated as literal characters rather than SQL wildcards.
+- Search narrows whatever the mentor and service dropdowns have already selected.
+
+The term appears in the URL as `?q=`, so a search is shareable and bookmarkable in the same way as a filtered view:
+
+```
+/client-testimonials/?q=narinder
+/client-testimonials/?mentor=nitin-naik&q=kaur
+```
+
+A `search` attribute on the shortcode pins the term and hides the box, the same way `mentor` does.
 
 ### Pre-filtered links
 
@@ -158,6 +178,14 @@ Deactivate this plugin, reactivate Strong Testimonials, restore the original sho
 ---
 
 ## Changelog
+
+### v1.6
+- **Name search box** in the filter bar, for finding the person who left a testimonial. Matches the post title and the name meta field only, not the testimonial body, so a search returns testimonials written *by* that person rather than ones mentioning them.
+- Partial words match, and several words match in any order, so `narin`, `narinder kaur` and `kaur narinder` all find the same person.
+- Typing is debounced; Enter searches immediately. A clear button resets just the search, and Reset clears the search along with the dropdowns.
+- The term syncs to the URL as `?q=`, so searches are shareable, and an unmatched search names the term in the empty-state message.
+- The filter bar now renders when search is enabled even if no mentor or service terms exist yet.
+- `%` and `_` typed into the box are escaped, so they match literally instead of acting as SQL wildcards.
 
 ### v1.5.1
 - Sidebar menu renamed from "Testimonials" to "GMA Testimonials", matching the naming of the other GMA plugins. The post type slug, labels elsewhere and all stored data are unchanged.

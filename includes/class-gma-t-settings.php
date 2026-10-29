@@ -43,7 +43,7 @@ class GMA_T_Settings {
         $checkboxes = ['show_photo', 'show_date', 'show_rating', 'show_badges', 'equal_heights',
                        'enable_filters', 'reminder_enabled', 'uploader_enabled',
                        'show_pagination', 'show_count', 'terms_enabled', 'single_urls',
-                       'tokens_enabled'];
+                       'tokens_enabled', 'enable_search'];
         foreach ($checkboxes as $key) {
             $out[$key] = !empty($in[$key]) ? 1 : 0;
         }
@@ -70,7 +70,8 @@ class GMA_T_Settings {
             ? $in['photo_size'] : $d['photo_size'];
 
         $texts = ['read_more_text', 'read_less_text', 'mentor_label', 'service_label', 'all_label',
-                  'date_format', 'subject', 'from_name', 'time', 'count_template'];
+                  'date_format', 'subject', 'from_name', 'time', 'count_template',
+                  'search_label', 'search_placeholder'];
         foreach ($texts as $key) {
             $out[$key] = isset($in[$key]) ? sanitize_text_field($in[$key]) : $d[$key];
         }
@@ -232,6 +233,14 @@ class GMA_T_Settings {
         $this->text('mentor_label', 'Mentor dropdown label', 220);
         $this->text('service_label', 'Service dropdown label', 220);
         $this->text('all_label', '"All" option text', 220);
+        echo '<tr><th scope="row">Name search</th><td>';
+        $this->checkbox('enable_search', 'Show a search box in the filter bar');
+        echo '<p class="description">Searches the testimonial title and the name field only, not the testimonial text, '
+           . 'so a search finds testimonials written <em>by</em> that person rather than ones mentioning them. '
+           . 'Several words match in any order, and partial words match.</p>';
+        echo '</td></tr>';
+        $this->text('search_label', 'Search box label', 220);
+        $this->text('search_placeholder', 'Search box placeholder', 320);
         echo '</tbody></table>';
 
         $this->link_builder();

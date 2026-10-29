@@ -38,8 +38,11 @@
         body.append('action', 'gma_t_filter');
         body.append('nonce', GMAT.nonce);
         body.append('config', wrap.getAttribute('data-config') || '{}');
+        var searchBox = wrap.querySelector('.gma-t-search');
+
         body.append('mentor', mentorSel ? mentorSel.value : '');
         body.append('service', serviceSel ? serviceSel.value : '');
+        body.append('search', searchBox ? searchBox.value : '');
         body.append('paged', paged || 1);
         body.append('mode', mode || 'full');
         return body;
@@ -161,6 +164,7 @@
         try {
             var url = new URL(window.location.href);
 
+
             if (mentorSel && mentorSel.value) {
                 url.searchParams.set('mentor', mentorSel.value);
             } else {
@@ -173,6 +177,13 @@
                 url.searchParams.delete('service');
             }
 
+            var searchBox = wrap.querySelector('.gma-t-search');
+            if (searchBox && searchBox.value.trim()) {
+                url.searchParams.set('q', searchBox.value.trim());
+            } else {
+                url.searchParams.delete('q');
+            }
+
             window.history.replaceState({}, '', url.toString());
         } catch (e) {
             /* older browser - the filtering still works, the URL just won't update */
@@ -180,17 +191,78 @@
     }
 
     function bindFilters(wrap) {
-        var selects = wrap.querySelectorAll('.gma-t-select');
+        var selects   = wrap.querySelectorAll('.gma-t-select');
+        var searchBox = wrap.querySelector('.gma-t-search');
+        var clearBtn  = wrap.querySelector('.gma-t-search-clear');
+
         for (var i = 0; i < selects.length; i++) {
             selects[i].addEventListener('change', function () {
                 syncUrl(wrap);
                 fetchResults(wrap, 1);
             });
         }
+
+        /* Show the clear affordance only when there is something to clear. */
+        function updateClear() {
+            if (!clearBtn || !searchBox) return;
+            clearBtn.hidden = (searchBox.value === '');
+        }
+
+        function runSearch() {
+            updateClear();
+            syncUrl(wrap);
+            fetchResults(wrap, 1);
+        }
+
+        if (searchBox) {
+            var timer = null;
+            var last  = searchBox.value;
+
+            /* Debounced, so typing a name does not fire a request per letter. */
+            searchBox.addEventListener('input', function () {
+                updateClear();
+                if (timer) { clearTimeout(timer); }
+                timer = setTimeout(function () {
+                    if (searchBox.value === last) return;
+                    last = searchBox.value;
+                    runSearch();
+                }, 350);
+            });
+
+            /* Enter searches straight away rather than waiting out the debounce,
+               and never submits a surrounding form. */
+            searchBox.addEventListener('keydown', function (e) {
+                if (e.key !== 'Enter') return;
+                e.preventDefault();
+                if (timer) { clearTimeout(timer); }
+                last = searchBox.value;
+                runSearch();
+            });
+
+            /* The native clear "x" in a search input fires search, not input,
+               in some browsers. */
+            searchBox.addEventListener('search', function () {
+                if (searchBox.value === last) return;
+                last = searchBox.value;
+                runSearch();
+            });
+        }
+
+        if (clearBtn && searchBox) {
+            clearBtn.addEventListener('click', function () {
+                if (searchBox.value === '') return;
+                searchBox.value = '';
+                searchBox.focus();
+                runSearch();
+            });
+        }
+
         var reset = wrap.querySelector('.gma-t-reset');
         if (reset) {
             reset.addEventListener('click', function () {
                 for (var j = 0; j < selects.length; j++) selects[j].value = '';
+                if (searchBox) { searchBox.value = ''; }
+                updateClear();
                 syncUrl(wrap);
                 fetchResults(wrap, 1);
             });

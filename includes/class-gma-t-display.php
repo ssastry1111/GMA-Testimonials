@@ -38,7 +38,9 @@ class GMA_T_Display {
             'mentor'        => '',
             'service'       => '',
             'category'      => '',
+            'search'        => '',
             'filters'       => gma_t_opt('enable_filters'),
+            'show_search'   => gma_t_opt('enable_search'),
             'show_photo'    => gma_t_opt('show_photo'),
             'show_date'     => gma_t_opt('show_date'),
             'show_rating'   => gma_t_opt('show_rating'),
@@ -73,6 +75,27 @@ class GMA_T_Display {
         return $term ? $term->slug : '';
     }
 
+    /**
+     * Read the name search from the query string.
+     *
+     * Free text rather than a slug, so it is only trimmed, stripped of tags
+     * and length-capped here; the SQL below escapes it properly.
+     */
+    private function search_from_url() {
+        if (empty($_GET['q'])) return '';
+        return $this->clean_search(wp_unslash($_GET['q']));
+    }
+
+    /** Normalise a search term from any source. */
+    private function clean_search($raw) {
+        $term = sanitize_text_field((string) $raw);
+        $term = preg_replace('/\s+/', ' ', trim($term));
+        if (function_exists('mb_substr')) {
+            return mb_substr($term, 0, 100);
+        }
+        return substr($term, 0, 100);
+    }
+
     public function shortcode($atts) {
         wp_enqueue_style('gma-testimonials');
         wp_enqueue_script('gma-testimonials');
@@ -85,8 +108,9 @@ class GMA_T_Display {
         // dropdown, so the visitor can still change or reset it.
         $locked_mentor  = ! empty($atts['mentor']);
         $locked_service = ! empty($atts['service']);
+        $locked_search  = ! empty($atts['search']);
 
-        $preselect = ['mentor' => '', 'service' => ''];
+        $preselect = ['mentor' => '', 'service' => '', 'search' => ''];
 
         if (!$locked_mentor) {
             $from_url = $this->slug_from_url('mentor', GMA_T_TAX_MENTOR);
@@ -104,18 +128,29 @@ class GMA_T_Display {
             }
         }
 
+        if ($locked_search) {
+            $a['search'] = $this->clean_search($atts['search']);
+        } else {
+            $from_url = $this->search_from_url();
+            if ($from_url !== '') {
+                $a['search']         = $from_url;
+                $preselect['search'] = $from_url;
+            }
+        }
+
         // The config travels to the AJAX handler, which takes the live
-        // dropdown values instead - so strip any preselected terms from it and
-        // keep only what the shortcode itself pinned.
+        // control values instead - so strip anything merely preselected from
+        // it and keep only what the shortcode itself pinned.
         $config = $a;
         $config['mentor']  = $locked_mentor  ? $a['mentor']  : '';
         $config['service'] = $locked_service ? $a['service'] : '';
+        $config['search']  = $locked_search  ? $a['search']  : '';
 
         ob_start();
         echo '<div class="gma-t-wrap" data-config="' . esc_attr(wp_json_encode($config)) . '">';
 
-        if (!empty($a['filters']) && (!$locked_mentor || !$locked_service)) {
-            echo $this->render_filter_bar($preselect, $locked_mentor, $locked_service);
+        if (!empty($a['filters']) && (!$locked_mentor || !$locked_service || !$locked_search)) {
+            echo $this->render_filter_bar($preselect, $locked_mentor, $locked_service, $locked_search, $a);
         }
 
         echo '<div class="gma-t-results" aria-live="polite">';
@@ -262,16 +297,23 @@ class GMA_T_Display {
      * @param bool  $locked_mentor   Mentor pinned by the shortcode - hide it.
      * @param bool  $locked_service  Service pinned by the shortcode - hide it.
      */
-    private function render_filter_bar($preselect = [], $locked_mentor = false, $locked_service = false) {
+    private function render_filter_bar($preselect = [], $locked_mentor = false, $locked_service = false, $locked_search = false, $a = []) {
         $mentors  = get_terms(['taxonomy' => GMA_T_TAX_MENTOR,  'hide_empty' => true]);
         $services = get_terms(['taxonomy' => GMA_T_TAX_SERVICE, 'hide_empty' => true]);
 
         $has_mentors  = (!is_wp_error($mentors)  && !empty($mentors))  && !$locked_mentor;
         $has_services = (!is_wp_error($services) && !empty($services)) && !$locked_service;
-        if (!$has_mentors && !$has_services) return '';
+
+        $show_search = !$locked_search
+            && (isset($a['show_search']) ? !empty($a['show_search']) : (bool) gma_t_opt('enable_search'));
+
+        // The search box alone is reason enough to render the bar, so a site
+        // with no mentor or service terms yet still gets it.
+        if (!$has_mentors && !$has_services && !$show_search) return '';
 
         $sel_mentor  = isset($preselect['mentor'])  ? $preselect['mentor']  : '';
         $sel_service = isset($preselect['service']) ? $preselect['service'] : '';
+        $sel_search  = isset($preselect['search'])  ? $preselect['search']  : '';
 
         $all = esc_html(gma_t_opt('all_label'));
         $out = '<div class="gma-t-filters">';
@@ -300,9 +342,68 @@ class GMA_T_Display {
             $out .= '</select></label>';
         }
 
+        if ($show_search) {
+            $out .= '<label class="gma-t-filter gma-t-filter-search">';
+            $out .= '<span>' . esc_html(gma_t_opt('search_label')) . '</span>';
+            $out .= '<span class="gma-t-search-wrap">';
+            $out .= '<input type="search" class="gma-t-search" autocomplete="off"'
+                  . ' placeholder="' . esc_attr(gma_t_opt('search_placeholder')) . '"'
+                  . ' aria-label="' . esc_attr(gma_t_opt('search_label')) . '"'
+                  . ' value="' . esc_attr($sel_search) . '">';
+            $out .= '<button type="button" class="gma-t-search-clear" aria-label="Clear search"'
+                  . ($sel_search === '' ? ' hidden' : '') . '>&times;</button>';
+            $out .= '</span></label>';
+        }
+
         $out .= '<button type="button" class="gma-t-reset">Reset</button>';
         $out .= '</div>';
         return $out;
+    }
+
+    /**
+     * Post IDs whose provider name matches the search term.
+     *
+     * Matches the post title and the configured name meta field only - not the
+     * testimonial body, so searching "Nitin" finds testimonials written BY
+     * Nitin rather than every testimonial that mentions him.
+     *
+     * Multiple words must all match, in any order, so both "narinder kaur" and
+     * "kaur narinder" find the same person.
+     *
+     * @param string $term Cleaned search term.
+     * @return int[] Matching IDs; an empty array means nothing matched.
+     */
+    private function search_post_ids($term) {
+        global $wpdb;
+
+        $tokens = preg_split('/\s+/', trim((string) $term), -1, PREG_SPLIT_NO_EMPTY);
+        if (empty($tokens)) return [];
+
+        // Cap the token count so a pathological query string cannot build an
+        // enormous statement.
+        $tokens = array_slice($tokens, 0, 6);
+
+        $where  = [];
+        $params = [gma_t_opt('meta_name'), GMA_T_PT];
+
+        foreach ($tokens as $token) {
+            $like     = '%' . $wpdb->esc_like($token) . '%';
+            $where[]  = '(p.post_title LIKE %s OR pm.meta_value LIKE %s)';
+            $params[] = $like;
+            $params[] = $like;
+        }
+
+        $sql = "SELECT DISTINCT p.ID
+                  FROM {$wpdb->posts} p
+                  LEFT JOIN {$wpdb->postmeta} pm
+                         ON pm.post_id = p.ID AND pm.meta_key = %s
+                 WHERE p.post_type = %s
+                   AND p.post_status = 'publish'
+                   AND " . implode(' AND ', $where);
+
+        $ids = $wpdb->get_col($wpdb->prepare($sql, $params));
+
+        return array_map('intval', (array) $ids);
     }
 
     /** Build the WP_Query args for a given config and page. */
@@ -334,6 +435,14 @@ class GMA_T_Display {
         if (count($tax_query) > 1) $tax_query['relation'] = 'AND';
         if ($tax_query) $args['tax_query'] = $tax_query;
 
+        // Name search narrows whatever the filters already selected.
+        if (!empty($a['search'])) {
+            $ids = $this->search_post_ids($a['search']);
+            // post__in must never be empty or WP_Query ignores it and returns
+            // everything, so an unmatched search gets a deliberately dead ID.
+            $args['post__in'] = !empty($ids) ? $ids : [0];
+        }
+
         return $args;
     }
 
@@ -349,7 +458,13 @@ class GMA_T_Display {
 
         if (!$q->have_posts()) {
             wp_reset_postdata();
-            return ($mode === 'cards') ? '' : '<p class="gma-t-empty">No testimonials match your selection yet.</p>';
+            if ($mode === 'cards') return '';
+
+            $message = !empty($a['search'])
+                ? 'No testimonials found for &ldquo;' . esc_html($a['search']) . '&rdquo;.'
+                : 'No testimonials match your selection yet.';
+
+            return '<p class="gma-t-empty">' . $message . '</p>';
         }
 
         $cards = '';
@@ -564,6 +679,12 @@ class GMA_T_Display {
 
         $a['mentor']  = isset($_POST['mentor'])  ? sanitize_title(wp_unslash($_POST['mentor']))  : '';
         $a['service'] = isset($_POST['service']) ? sanitize_title(wp_unslash($_POST['service'])) : '';
+        $a['search']  = isset($_POST['search'])  ? $this->clean_search(wp_unslash($_POST['search'])) : '';
+
+        // A search pinned by the shortcode wins over anything posted.
+        if (!empty($config['search'])) {
+            $a['search'] = $this->clean_search($config['search']);
+        }
         $paged        = isset($_POST['paged'])   ? max(1, (int) $_POST['paged']) : 1;
         $mode         = (isset($_POST['mode']) && $_POST['mode'] === 'cards') ? 'cards' : 'full';
 
